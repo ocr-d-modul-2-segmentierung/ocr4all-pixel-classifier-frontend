@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='ocr4all_pixel_classifier',
-    version='0.3.0',
+    name='ocr4all_pixel_classifier_frontend',
+    version='0.4.0',
     packages=find_packages(),
     long_description=long_description,
 
@@ -16,8 +16,8 @@ setup(
     url="https://gitlab2.informatik.uni-wuerzburg.de/chw71yx/page-segmentation.git",
     entry_points={
         'console_scripts': [
-            'ocr4all-pixel-classifier=ocr4all_pixel_classifier.scripts.main:main',
-            'page-segmentation=ocr4all_pixel_classifier.scripts.main:main',  # legacy
+            'ocr4all-pixel-classifier=ocr4all_pixel_classifier_frontend.main:main',
+            'page-segmentation=ocr4all_pixel_classifier_frontend.main:main',  # legacy
         ],
     },
     install_requires=open("requirements.txt").read().split(),

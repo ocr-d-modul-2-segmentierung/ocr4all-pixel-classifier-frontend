@@ -5,52 +5,52 @@ import importlib
 
 commands = {
     'train': {
-        'script': 'ocr4all_pixel_classifier.scripts.train',
+        'script': 'ocr4all_pixel_classifier_frontend.train',
         'main': 'main',
         'help': 'Train the neural network. See more via "* train --help"'
     },
     'predict': {
-        'script': 'ocr4all_pixel_classifier.scripts.predict',
+        'script': 'ocr4all_pixel_classifier_frontend.predict',
         'main': 'main',
         'help': 'Predict a result with the neural network. See more via "* predict --help"'
     },
     'predict-json': {
-        'script': 'ocr4all_pixel_classifier.scripts.predict_json',
+        'script': 'ocr4all_pixel_classifier_frontend.predict_json',
         'main': 'main',
         'help': 'Predict a result with the neural network, input via JSON. See more via "* predict --help"'
     },
     'create-dataset-file': {
-        'script': 'ocr4all_pixel_classifier.scripts.create_dataset_file',
+        'script': 'ocr4all_pixel_classifier_frontend.create_dataset_file',
         'main': 'main',
         'help': 'Create a dataset file'
     },
     'compute-image-normalizations': {
-        'script': 'ocr4all_pixel_classifier.scripts.compute_image_normalizations',
+        'script': 'ocr4all_pixel_classifier_frontend.compute_image_normalizations',
         'main': 'main',
         'help': 'Compute image normalizations'
     },
     'compute-image-map': {
-        'script': 'ocr4all_pixel_classifier.scripts.generate_image_map',
+        'script': 'ocr4all_pixel_classifier_frontend.generate_image_map',
         'main': 'main',
         'help': 'Generates color map'
     },
     'migrate-model': {
-        'script': 'ocr4all_pixel_classifier.scripts.migrate_model',
+        'script': 'ocr4all_pixel_classifier_frontend.migrate_model',
         'main': 'main',
         'help': 'Convert old model to new format'
     },
     'gen-masks': {
-        'script': 'ocr4all_pixel_classifier.scripts.gen_masks',
+        'script': 'ocr4all_pixel_classifier_frontend.gen_masks',
         'main': 'main',
         'help': 'Generate mask images from PAGE XML'
     },
     'find-segments': {
-        'script': 'ocr4all_pixel_classifier.scripts.find_segments',
+        'script': 'ocr4all_pixel_classifier_frontend.find_segments',
         'main': 'main',
         'help': 'Run a prediction and region segmentation'
     },
     'eval': {
-        'script': 'ocr4all_pixel_classifier.scripts.evaluate',
+        'script': 'ocr4all_pixel_classifier_frontend.evaluate',
         'main': 'main',
         'help': 'Evaluate a model'
     },

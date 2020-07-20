@@ -256,7 +256,7 @@ def create_predictions(model, image_path, binary_path, char_height, target_line_
 
 def create_pagexml(result: SegmentationResult, output_dir: Optional[str] = None):
     import pypagexml as pxml
-    meta = pxml.ds.MetadataTypeSub(Creator="ocr4all_pixel_classifier", Created=pxml.ds.iso_now())
+    meta = pxml.ds.MetadataTypeSub(Creator="ocr4all_pixel_classifier_frontend", Created=pxml.ds.iso_now())
     doc = pxml.new_document_from_image(result.path, meta)
 
     def add_segment(segment: AnyRegion, index: int, idprefix: str, region_type: Type,
