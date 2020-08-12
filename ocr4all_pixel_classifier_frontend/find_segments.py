@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pypagexml.ds import TextRegionTypeSub, CoordsTypeSub, ImageRegionTypeSub
 from tqdm import tqdm
 
-from ocr4all_pixel_classifier.lib.dataset import SingleData, color_to_label, label_to_colors
+from ocr4all_pixel_classifier.lib.dataset import SingleData, color_to_label, label_to_colors, DatasetLoader
 from ocr4all_pixel_classifier.lib.image_map import load_image_map_from_file, DEFAULT_IMAGE_MAP
 from ocr4all_pixel_classifier.lib.pc_segmentation import find_segments, get_text_contours
 from ocr4all_pixel_classifier.lib.predictor import PredictSettings, Predictor
@@ -207,16 +207,15 @@ def post_process_args(args, parser):
     return image_map, rev_image_map
 
 
+
 def predict_masks(output: Optional[str],
-                  image: np.ndarray,
-                  binary: np.ndarray,
+                  data: SingleData,
                   color_map: dict,
                   line_height: int,
                   model: str,
                   post_processors: Optional[List[Callable[[np.ndarray, SingleData], np.ndarray]]] = None,
                   gpu_allow_growth: bool = False,
                   ) -> Masks:
-    data = SingleData(binary=binary, image=image, original_shape=binary.shape, line_height_px=line_height)
 
     settings = PredictSettings(
         network=os.path.abspath(model),
@@ -240,12 +239,14 @@ def create_predictions(model, image_path, binary_path, char_height, target_line_
     image = imread(image_path)
     binary = imread_bin(binary_path)
 
-    from ocr4all_pixel_classifier.lib.dataset import prepare_images
-    img, bin = prepare_images(image, binary, target_line_height, char_height)
+    dataset_loader = DatasetLoader(target_line_height, prediction=True, color_map=image_map)
+
+    data = dataset_loader.load_data(
+        [SingleData(binary_path=binary_path, image_path=image_path, line_height_px=target_line_height)]
+    ).data[0]
 
     return predict_masks(None,
-                         img,
-                         bin,
+                         data,
                          image_map,
                          char_height,
                          model=model,
