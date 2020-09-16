@@ -122,3 +122,11 @@ Required arguments:
 Optional arguments:
 - `--average_all`: Average height over all images
 - `--inverse`
+
+
+### Versioning
+
+Major and minor versions are usually identical to the ones of the used
+`ocr4all-pixel-classifier` library. As this package is a frontend package and not
+intended for use as library, no guarantees are made regarding API stability
+between versions. Use `ocr4all-pixel-classifier` in this case.
