@@ -20,11 +20,7 @@ setup(
             'page-segmentation=ocr4all_pixel_classifier_frontend.main:main',  # legacy
         ],
     },
-    install_requires=open("requirements.txt").read().split(),
-    extras_require={
-        'tf_cpu': ['tensorflow>=2.0.0,<2.1.0'],
-        'tf_gpu': ['tensorflow-gpu>=2.0.0,<2.1.0'],
-    },
+    install_requires=open("requirements.in").read().split(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
