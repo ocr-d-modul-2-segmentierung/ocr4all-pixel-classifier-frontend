@@ -34,6 +34,16 @@ commands = {
         'main': 'main',
         'help': 'Generates color map'
     },
+    'inspect-image-map': {
+        'script': 'ocr4all_pixel_classifier_frontend.inspect_image_map',
+        'main': 'main',
+        'help': 'Displays image map on a color-enabled terminal'
+    },
+    'convert-colors': {
+        'script': 'ocr4all_pixel_classifier_frontend.convert_colors',
+        'main': 'main',
+        'help': 'Convert predictions or masks from one color mapping to another'
+    },
     'migrate-model': {
         'script': 'ocr4all_pixel_classifier_frontend.migrate_model',
         'main': 'main',
