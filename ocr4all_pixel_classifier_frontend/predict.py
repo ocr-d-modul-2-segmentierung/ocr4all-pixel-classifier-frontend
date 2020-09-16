@@ -1,18 +1,17 @@
 import argparse
 import json
 import os
-import numpy as np
 from typing import Generator, List, Callable, Optional, Union
 
-from tqdm import tqdm
-
+import numpy as np
 from ocr4all_pixel_classifier.lib.dataset import DatasetLoader, SingleData
+from ocr4all_pixel_classifier.lib.image_map import load_image_map_from_file, DEFAULT_IMAGE_MAP
 from ocr4all_pixel_classifier.lib.image_ops import compute_char_height
 from ocr4all_pixel_classifier.lib.output import output_data, scale_to_original_shape
 from ocr4all_pixel_classifier.lib.postprocess import find_postprocessor, postprocess_help
 from ocr4all_pixel_classifier.lib.predictor import Predictor, PredictSettings, Prediction
-from ocr4all_pixel_classifier.lib.image_map import load_image_map_from_file, DEFAULT_IMAGE_MAP
-from ocr4all_pixel_classifier.lib.util import glob_all, preserving_resize
+from ocr4all_pixel_classifier.lib.util import glob_all
+from tqdm import tqdm
 
 
 def main():

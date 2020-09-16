@@ -1,7 +1,7 @@
 import argparse
 import multiprocessing
 
-from ocr4all_pixel_classifier.lib.image_map import compute_image_map
+from ocr4all.image_map import compute_from_images
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
                           help="Number of threads to use")
 
     args = parser.parse_args()
-    compute_image_map(args.input_dir, args.output_dir, args.max_image, args.threads)
+    compute_from_images(args.input_dir, args.output_dir, args.max_image, args.threads)
 
 
 if __name__ == '__main__':

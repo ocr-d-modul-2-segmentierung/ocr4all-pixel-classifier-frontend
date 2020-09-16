@@ -1,5 +1,6 @@
-import tensorflow as tf
 import logging
+
+import tensorflow as tf
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ def migrate_model(path_to_meta, n_classes, l_rate, output_path):
             for var in vars_global:
                 model_vars[var.name] = var.eval()
 
-        from ocr4all_pixel_classifier.lib.metrics import fgpa, accuracy, loss
+        from ocr4all_pixel_classifier.lib.metrics import accuracy, loss
 
         input_image = tf.keras.layers.Input((None, None, 1))
         input_binary = tf.keras.layers.Input((None, None, 1))
