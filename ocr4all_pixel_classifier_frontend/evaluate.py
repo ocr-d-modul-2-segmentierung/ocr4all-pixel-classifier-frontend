@@ -6,7 +6,7 @@ from typing import Tuple
 
 import numpy as np
 from ocr4all.files import imread_bin, match_filenames
-from ocr4all.image_map import ImageMap
+from ocr4all.colors import ColorMap
 from ocr4all_pixel_classifier.lib.evaluation import count_matches, total_accuracy, f1_measures, ConnectedComponentEval, \
     cc_matching
 from tqdm import tqdm
@@ -57,10 +57,10 @@ def main():
     # image_tpfpfn_cc = np.zeros([3])
 
     if args.color_map_model and args.color_map_eval:
-        model_map = ImageMap.load(args.color_map_model)
-        eval_map = ImageMap.load(args.color_map_eval)
+        model_map = ColorMap.load(args.color_map_model)
+        eval_map = ColorMap.load(args.color_map_eval)
     else:
-        model_map = eval_map = ImageMap({(255, 255, 255): (0, 'background'),
+        model_map = eval_map = ColorMap({(255, 255, 255): (0, 'background'),
                                          (0, 255, 0): (1, 'text'),
                                          (255, 0, 255): (2, 'image')})
 
@@ -126,7 +126,7 @@ def csv_total(category: str, counts: np.ndarray):
         .format(category, ttp, tfp, tfn, *f1_measures(ttp, tfp, tfn))
 
 
-def eval_page(page: Tuple[str, str, str], eval_map: ImageMap, model_map: ImageMap, verbose, csv, singleclass, args):
+def eval_page(page: Tuple[str, str, str], eval_map: ColorMap, model_map: ColorMap, verbose, csv, singleclass, args):
     mask_p, pred_p, bin_p = page
     mask = eval_map.imread_labels(mask_p)
     pred = model_map.imread_labels(pred_p)

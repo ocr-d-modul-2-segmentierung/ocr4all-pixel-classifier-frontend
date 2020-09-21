@@ -38,7 +38,7 @@ def main():
                         help="Generate tensorboard logs")
     parser.add_argument("--reduce-lr-on-plateau", action="store_true",
                         help="Reduce learn rate when on plateau")
-    parser.add_argument("--color-map", type=str, default="image_map.json",
+    parser.add_argument("--color-map", type=str, default=None,
                         help="color map to load")
     parser.add_argument('--architecture',
                         default=Architecture.FCN_SKIP,
@@ -60,7 +60,7 @@ def main():
     parser.add_argument("--split_file", type=str, help=argparse.SUPPRESS)
     parser.add_argument("--foreground_masks", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--reduce_lr_on_plateau", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--color_map", type=str, default="image_map.json", help=argparse.SUPPRESS)
+    parser.add_argument("--color_map", type=str, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--gpu_allow_growth", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
 
@@ -86,11 +86,17 @@ def main():
             args.eval += relpaths(reldir, d["eval"])
 
     from ocr4all_pixel_classifier.lib.dataset import DatasetLoader
-    from ocr4all_pixel_classifier.lib.image_map import load_image_map_from_file
+    from ocr4all.colors import ColorMap
     from ocr4all_pixel_classifier.lib.metrics import Loss
 
-    image_map = load_image_map_from_file(args.color_map)
-    dataset_loader = DatasetLoader(args.target_line_height, image_map)
+    if args.color_map is None:
+        import os
+        args.color_map = next(p for p in ["color_map.json", "image_map.json"] if os.path.exists(p))
+    if args.color_map is None:
+        parser.error("No color map found. Use --color-map to specify location manually")
+
+    color_map = ColorMap.load(args.color_map)
+    dataset_loader = DatasetLoader(args.target_line_height, color_map)
 
     train_data = dataset_loader.load_data_from_json(args.train, "all" if args.ignore_types_from_file else "train")
     test_data = dataset_loader.load_data_from_json(args.test, "all" if args.ignore_types_from_file else "test")

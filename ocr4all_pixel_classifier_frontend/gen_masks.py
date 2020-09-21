@@ -22,8 +22,8 @@ def main():
 
     conf_args = parser.add_argument_group("optional arguments")
     conf_args.add_argument("-h", "--help", action="help", help="show this help message and exit")
-    conf_args.add_argument("-M", "--image-map-dir", type=str, default=None,
-                           help="location for writing the image map")
+    conf_args.add_argument("-M", "--color-map-dir", type=str, default=None,
+                           help="location for writing the color map")
     conf_args.add_argument("-s", '--setting',
                            default='all_types',
                            choices=[t.value for t in MaskType],
@@ -63,10 +63,10 @@ def main():
         for file in files:
             mask_gen.save(file, args.output_dir)
 
-    if args.image_map_dir:
-        with open(os.path.join(args.image_map_dir, 'image_map.json'), 'w') as fp:
+    if args.color_map_dir:
+        with open(os.path.join(args.color_map_dir, 'color_map.json'), 'w') as fp:
             import json
-            json.dump(PageXMLTypes.image_map(MaskType(args.setting)), fp)
+            json.dump(PageXMLTypes.color_map(MaskType(args.setting)), fp)
 
 
 if __name__ == '__main__':

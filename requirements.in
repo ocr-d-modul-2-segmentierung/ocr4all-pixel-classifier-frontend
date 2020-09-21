@@ -1,5 +1,5 @@
-ocr4all-pixel-classifier~=0.5
-ocr4all-pylib~=0.1
+ocr4all-pixel-classifier~=0.6
+ocr4all-pylib~=0.2
 tqdm
 pypagexml
 numpy

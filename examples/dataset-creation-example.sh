@@ -22,7 +22,7 @@ for book in book*; do
 	#   - text_nontext: red for text, green for non_text
 	#   - baseline: draw baselines of text lines
 	#   - textline: draw polygons of text lines
-	# we set --image_map_dir to the current directory, which will overwrite the
+	# we set --color-map-dir to the current directory, which will overwrite the
 	# output in each loop, but the image map generated is constant for each
 	# setting and only one file is needed for training
 	ocr4all-pixel-classifier gen-masks \
@@ -30,7 +30,7 @@ for book in book*; do
 		--output-dir $book/masks \
 		--threads $(nproc) \
 		--setting text_nontext \
-		--image-map_dir ./
+		--color-map_dir ./
 
 	# Estimate the xheight for all pages based on connected components in binary
 	# image.

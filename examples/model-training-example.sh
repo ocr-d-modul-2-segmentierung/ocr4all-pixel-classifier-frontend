@@ -21,7 +21,7 @@ ocr4all-pixel-classifier train \
 	--n-epoch 100 \
 	--early-stopping-max-performance-drops 30 \
 	--output my-model \
-	--color_map image_map.json
+	--color-map color_map.json
 
 # if using a split file:
 ocr4all-pixel-classifier train \
@@ -29,7 +29,7 @@ ocr4all-pixel-classifier train \
 	-E 100 \
 	-S 30 \
 	--output my-model \
-	--color_map image_map.json
+	--color-map color_map.json
 
 
 # you can also use --load to specify an existing model on which to continue

@@ -26,7 +26,6 @@ def migrate_model(path_to_meta, n_classes, l_rate, output_path):
         from ocr4all_pixel_classifier.lib.metrics import accuracy, loss
 
         input_image = tf.keras.layers.Input((None, None, 1))
-        input_binary = tf.keras.layers.Input((None, None, 1))
 
         from ocr4all_pixel_classifier.lib.model import model_fcn_skip
         model = model_fcn_skip([input_image], n_classes)
@@ -34,9 +33,9 @@ def migrate_model(path_to_meta, n_classes, l_rate, output_path):
         model.compile(optimizer=optimizer, loss=loss, metrics=[accuracy])
         keys = list(model_vars.keys())
         counter = 0
-        for l in model.layers:
-            if len(l.get_weights()) > 0:
-                l.set_weights([model_vars[keys[counter]], model_vars[keys[counter + 1]]])
+        for layer in model.layers:
+            if len(layer.get_weights()) > 0:
+                layer.set_weights([model_vars[keys[counter]], model_vars[keys[counter + 1]]])
                 counter += 2
                 pass
         model.save(output_path)

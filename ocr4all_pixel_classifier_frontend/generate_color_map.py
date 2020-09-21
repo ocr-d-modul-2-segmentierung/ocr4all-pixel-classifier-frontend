@@ -1,7 +1,7 @@
 import argparse
 import multiprocessing
 
-from ocr4all.image_map import compute_from_images
+from ocr4all.colors import compute_from_images
 
 
 def main():

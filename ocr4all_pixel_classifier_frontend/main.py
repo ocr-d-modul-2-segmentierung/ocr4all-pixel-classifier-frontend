@@ -29,15 +29,15 @@ commands = {
         'main': 'main',
         'help': 'Compute image normalizations'
     },
-    'compute-image-map': {
-        'script': 'ocr4all_pixel_classifier_frontend.generate_image_map',
+    'compute-color-map': {
+        'script': 'ocr4all_pixel_classifier_frontend.generate_color_map',
         'main': 'main',
         'help': 'Generates color map'
     },
-    'inspect-image-map': {
-        'script': 'ocr4all_pixel_classifier_frontend.inspect_image_map',
+    'inspect-color-map': {
+        'script': 'ocr4all_pixel_classifier_frontend.inspect_color_map',
         'main': 'main',
-        'help': 'Displays image map on a color-enabled terminal'
+        'help': 'Displays color map on a color-enabled terminal'
     },
     'convert-colors': {
         'script': 'ocr4all_pixel_classifier_frontend.convert_colors',

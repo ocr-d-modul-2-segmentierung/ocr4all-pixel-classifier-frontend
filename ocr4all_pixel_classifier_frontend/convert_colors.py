@@ -3,7 +3,7 @@ import functools
 import multiprocessing
 import os
 
-from ocr4all.image_map import ImageMap
+from ocr4all.colors import ColorMap
 from tqdm import tqdm
 
 
@@ -27,8 +27,8 @@ def main():
 
     args = parser.parse_args()
 
-    in_map = ImageMap.load(args.input_color_map)
-    out_map = ImageMap.load(args.output_color_map)
+    in_map = ColorMap.load(args.input_color_map)
+    out_map = ColorMap.load(args.output_color_map)
 
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -42,7 +42,7 @@ def main():
             pass
 
 
-def convert(img_path, outdir, in_map: ImageMap, out_map: ImageMap):
+def convert(img_path, outdir, in_map: ColorMap, out_map: ColorMap):
     labels = in_map.imread_labels(img_path)
     res = out_map.to_image(labels)
     res.save(os.path.join(outdir, os.path.basename(img_path)))
