@@ -1,7 +1,6 @@
 import argparse
 
 from ocr4all_pixel_classifier.lib.dataset import list_dataset, single_split, create_splits
-from random import seed
 import json
 
 
@@ -49,6 +48,7 @@ def main():
 
     args = parser.parse_args()
 
+    from random import seed
     seed(args.seed)
 
     data_files = list_dataset(args.dataset_path, args.xheight,
@@ -64,17 +64,17 @@ def main():
             train, test = split
             write_json(args.output_file.format(i), args.dataset_path, args.seed, train, test, [])
     else:
-        train, test, eval = single_split(args.n_train, args.n_test, args.n_eval, data_files)
-        write_json(args.output_file, args.dataset_path, args.seed, train, test, eval)
+        train, test, evaluation = single_split(args.n_train, args.n_test, args.n_eval, data_files)
+        write_json(args.output_file, args.dataset_path, args.seed, train, test, evaluation)
 
 
-def write_json(output_file, dataset_path, seed, train, test, eval):
+def write_json(output_file, dataset_path, seed, train, test, evaluation):
     content = json.dumps({
         "seed": seed,
         "dataset_path": dataset_path,
         "train": train,
         "test": test,
-        "eval": eval,
+        "eval": evaluation,
     }, indent=4)
     with open(output_file, "w") as f:
         f.write(content)

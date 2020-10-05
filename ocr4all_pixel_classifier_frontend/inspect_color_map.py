@@ -12,8 +12,7 @@ def main():
     args = parser.parse_args()
 
     for imap in args.vars:
-        map = ColorMap.load(imap)
-        for k, v in map.mapping.items():
+        for k, v in ColorMap.load(imap).mapping.items():
             print(f"\x1b[48;2;{k[0]};{k[1]};{k[2]}m    \x1b[0m  \x1b[38;2;{k[0]};{k[1]};{k[2]}m{v}\x1b[0m\n")
 
 

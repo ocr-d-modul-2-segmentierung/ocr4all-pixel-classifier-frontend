@@ -67,9 +67,9 @@ def main():
     def relpaths(basedir: str, files: List[str]) -> List[str]:
         return [x if x[0] == "/" else path.join(basedir, x) for x in files]
 
-    def is_valid_splitfile(json):
+    def is_valid_splitfile(jsondata):
         for category in ["train", "test", "eval"]:
-            if type(json[category]) == list and len(json[category]) > 0 and type(json[category][0]) != str:
+            if type(jsondata[category]) == list and len(jsondata[category]) > 0 and type(jsondata[category][0]) != str:
                 return False
         return True
 
