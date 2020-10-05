@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from typing import Tuple, Optional, List, Callable, Generator, Type, Any
 
 import numpy as np
-from ocr4all.colors import ColorMap, DEFAULT_COLOR_MAPPING, DEFAULT_LABELS_BY_NAME
+from ocr4all.colors import ColorMap, DEFAULT_COLOR_MAPPING
 from ocr4all.files import glob_all, imread, imread_bin
 from ocr4all_pixel_classifier.lib.dataset import SingleData, DatasetLoader
 from ocr4all_pixel_classifier.lib.image_ops import compute_char_height
 from ocr4all_pixel_classifier.lib.output import Masks
 from ocr4all_pixel_classifier.lib.pc_segmentation import find_segments, get_text_contours
-from ocr4all_pixel_classifier.lib.predictor import PredictSettings, Predictor
+from ocr4all_pixel_classifier.lib.predictor_data import PredictSettings
 from ocr4all_pixel_classifier.lib.render import render_regions, \
     render_morphological, render_xycut
 from ocr4all_pixel_classifier.lib.xycut import AnyRegion
@@ -41,10 +41,11 @@ def main():
     parser.add_argument("-m", "--method", type=str, choices=('xycut', 'morph'), default="xycut",
                         help="choose segmentation method")
 
-    parser.add_argument("-n", "--norm", type=str, required=False, nargs="+",
-                        help="use normalization files for input char height")
-    parser.add_argument("--char_height", type=int, required=False,
-                        help="Average height of character m or n in input")
+    normparser = parser.add_mutually_exclusive_group()
+    normparser.add_argument("-n", "--norm", type=str, required=False, nargs="+",
+                            help="use normalization files for input char height")
+    normparser.add_argument("--char-height", "--char_height", type=int, required=False,
+                            help="Average height of character m or n in input")
 
     parser.add_argument("--resize-height", type=int, default=300,
                         help="Image scaling size to use for XYcut")
@@ -71,7 +72,7 @@ def main():
     args = parser.parse_args()
 
     process_args(args, parser)
-    color_map, labels_by_name = process_color_map_args(args)
+    color_map = ColorMap.load(args.color_map) if args.color_map else ColorMap(DEFAULT_COLOR_MAPPING)
 
     if not args.existing_preds_inverted:
         results = predict_and_segment(args, color_map)
@@ -96,12 +97,12 @@ def main():
 
 
 def predict_and_segment(args, color_map: ColorMap) -> Generator[SegmentationResult, None, None]:
-    def segment_new_predictions(binary_path, char_height, color_map: ColorMap, image_path):
+    def segment_new_predictions(image_path, binary_path, char_height):
         masks = create_predictions(args.model, image_path, binary_path, char_height, args.target_line_height,
                                    args.gpu_allow_growth, color_map)
         overlay = masks.inverted_overlay
         if args.method == 'xycut':
-            text, image = find_segments(overlay.shape[0], overlay, char_height, args.resize_height)
+            text, image = find_segments(overlay.shape[0], overlay, char_height, args.resize_height, color_map)
         elif args.method == 'morph':
             text = get_text_contours(masks.fg_color_mask, char_height, color_map)
             _, image = find_segments(masks.inverted_overlay.shape[0], masks.inverted_overlay, char_height,
@@ -112,7 +113,7 @@ def predict_and_segment(args, color_map: ColorMap) -> Generator[SegmentationResu
         return SegmentationResult(text, image, overlay.shape[0:2], image_path)
 
     results = (
-        segment_new_predictions(binary_path, char_height, color_map, image_path)
+        segment_new_predictions(image_path, binary_path, char_height)
         for image_path, binary_path, char_height in
         tqdm(
             zip(args.image_paths, args.binary_paths, args.all_char_heights), unit='pages',
@@ -162,18 +163,13 @@ def process_args(args, parser):
     process_normalization_args(args, num_files, parser)
 
 
-def process_color_map_args(args):
-    if args.color_map:
-        color_map = ColorMap.load(args.color_map)
-        label_names = color_map.label_by_name
-    else:
-        color_map = ColorMap(DEFAULT_COLOR_MAPPING)
-        label_names = DEFAULT_LABELS_BY_NAME
-
-    return color_map, label_names
-
-
 def process_normalization_args(args, num_files, parser):
+    """
+    Create normalization array, either from loading normfiles or from char_height parameter
+    :param args: output of argparse
+    :param num_files: expected number of files
+    :param parser: argparse parser, for issuing errors
+    """
     if args.char_height:
         args.all_char_heights = [args.char_height] * num_files
     elif args.norm:
@@ -192,28 +188,36 @@ def process_normalization_args(args, num_files, parser):
 
 
 def process_image_args(args, parser):
+    """
+    Checks all input image arguments for consistency with the method's requirements.
+    :param args: output of argparse
+    :param parser: argparse parser, for issuing errors
+    :return: number of input files per type
+    """
     if args.existing_preds_inverted and ((args.existing_preds_color and args.binary) or args.method == "xycut"):
         args.existing_inverted_path = sorted(glob_all(args.existing_preds_inverted))
         num_files = len(args.existing_inverted_path)
         if args.method == "morph":
             args.existing_color_path = sorted(glob_all(args.existing_preds_color))
             args.binary_paths = sorted(glob_all(args.binary))
+            if len(args.existing_color_path) != num_files or len(args.binary_paths) != num_files:
+                return parser.error("number of images for predictions / inverted predictions / binaries do not match")
         else:
             args.existing_color_path = [None] * num_files
             args.binary_paths = [None] * num_files
     elif args.method == "morph" \
             and (args.existing_preds_color or args.existing_preds_inverted) \
             and not (args.existing_preds_color and args.existing_preds_inverted and args.binary):
-        parser.error("Morphology method requires binaries and both existing predictions.\n"
-                     "If you want to create new predictions, do not pass -e or -c.")
+        return parser.error("Morphology method requires binaries and both existing predictions.\n"
+                            "If you want to create new predictions, do not pass -e or -c.")
     elif args.binary:
         args.binary_paths = sorted(glob_all(args.binary))
         args.image_paths = sorted(glob_all(args.images)) if args.images else args.binary_paths
         num_files = len(args.binary_paths)
     elif args.method == "morph":
-        parser.error("Morphology method requires binary images.")
+        return parser.error("Morphology method requires binary images.")
     else:
-        parser.error("Prediction requires binary images. Either supply binaries or existing preds")
+        return parser.error("Prediction requires binary images. Either supply binaries or existing preds")
     return num_files
 
 
@@ -233,6 +237,7 @@ def predict_masks(output: Optional[str],
         n_classes=len(color_map),
         gpu_allow_growth=gpu_allow_growth,
     )
+    from ocr4all_pixel_classifier.lib.predictor import Predictor
     predictor = Predictor(settings)
 
     return predictor.predict_masks(data)
@@ -266,8 +271,8 @@ def create_pagexml(result: SegmentationResult, output_dir: Optional[str] = None,
     def add_segment(segment: AnyRegion, index: int, idprefix: str, region_type: Type,
                     region_adder: Callable[[Any], None]):
         coords = segment.polygon_coords()
-        id = f"{idprefix}{index}"
-        region = region_type(id=id, Coords=CoordsTypeSub.with_points(coords))
+        xmlid = f"{idprefix}{index}"
+        region = region_type(id=xmlid, Coords=CoordsTypeSub.with_points(coords))
         region_adder(region)
 
     for i, textseg in enumerate(result.text_segments):

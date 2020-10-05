@@ -8,9 +8,9 @@ from ocr4all_pixel_classifier.lib.dataset import DatasetLoader, SingleData
 from ocr4all_pixel_classifier.lib.image_ops import compute_char_height
 from ocr4all_pixel_classifier.lib.output import output_data, scale_to_original_shape
 from ocr4all_pixel_classifier.lib.postprocess import find_postprocessor, postprocess_help
-from ocr4all_pixel_classifier.lib.predictor import Predictor, PredictSettings, Prediction
 from ocr4all.files import glob_all
 from ocr4all.colors import ColorMap, DEFAULT_COLOR_MAPPING
+from ocr4all_pixel_classifier.lib.predictor_data import Prediction, PredictSettings
 from tqdm import tqdm
 
 
@@ -115,6 +115,7 @@ def predict(output,
             post_processors: Optional[List[Callable[[np.ndarray, SingleData], np.ndarray]]] = None,
             gpu_allow_growth: bool = False,
             ) -> Generator[Prediction, None, None]:
+    from ocr4all_pixel_classifier.lib.predictor import Predictor
     dataset_loader = DatasetLoader(target_line_height, prediction=True, color_map=color_map)
 
     if type(line_heights) is int:
