@@ -3,7 +3,7 @@ import json
 import sys
 from os import path
 from typing import List
-from ocr4all_pixel_classifier.lib.model import Architecture
+from ocr4all_pixel_classifier.lib.architecture import Architecture
 
 
 def main():
