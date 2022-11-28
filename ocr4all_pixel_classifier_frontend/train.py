@@ -17,7 +17,7 @@ def main():
                         help="Scale the data images so that the line height matches this value")
     parser.add_argument("-O", "--output", type=str, default="./",
                         help="target directory for model and logs")
-    parser.add_argument("--load", type=str, default=None,
+    parser.add_argument("--load", "--model", type=str, default=None,
                         help="load an existing model and continue training")
     parser.add_argument("-E", "--n-epoch", type=int, default=100,
                         help="number of epochs")
